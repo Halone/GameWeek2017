@@ -1,0 +1,28 @@
+﻿{
+	"info": {
+		"title": "template_weapons",
+		"version": 0.1
+	},
+	"data": [{
+		"name": "sword",
+		"range": 1,
+		"areaOfEffect": 0,
+		"cooldown": 0,
+		"use": 0,
+		"cost": 1
+	}, {
+		"name": "staff",
+		"range": 13,
+		"areaOfEffect": 0,
+		"cooldown": 0,
+		"use": 0,
+		"cost": 1
+	}, {
+		"name": "bow",
+		"range": 2,
+		"areaOfEffect": 0,
+		"cooldown": 0,
+		"use": 0,
+		"cost": 1
+	}]
+}

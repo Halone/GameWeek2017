@@ -1,0 +1,25 @@
+﻿{
+	"info": {
+		"title": "template_units",
+		"version": 0.1
+	},
+	"data": [{
+		"name": "knight",
+		"HP": 10,
+		"MP": 3,
+		"AP": 1,
+		"inventory": ["sword"]
+	}, {
+		"name": "wizard",
+		"HP": 6,
+		"MP": 3,
+		"AP": 1,
+		"inventory": ["staff"]
+	}, {
+		"name": "bowman",
+		"HP": 8,
+		"MP": 4,
+		"AP": 1,
+		"inventory": ["bow"]
+	}]
+}
