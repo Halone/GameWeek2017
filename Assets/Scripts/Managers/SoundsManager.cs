@@ -125,7 +125,7 @@ public class SoundsManager: BaseManager<SoundsManager>{
         PlayMusic(MUSIC_MENU);
     }
 
-    protected override void Play(int p_LevelID, int p_PhaseManager) {
+    protected override void Play(int p_LevelID) {
         PlayMusic(MUSIC_GAME);
     }
 

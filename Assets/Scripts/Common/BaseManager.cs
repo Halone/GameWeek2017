@@ -14,7 +14,6 @@ public abstract class BaseManager<T>: Singleton<T> where T: Component {
             GameManager.instance.onInit  += Init;
             GameManager.instance.onMenu  += Menu;
             GameManager.instance.onPlay  += Play;
-            GameManager.instance.onLoose += Loose;
             GameManager.instance.onWin   += Win;
         }
         else Debug.LogError("GameManager does not exist.");
@@ -27,7 +26,6 @@ public abstract class BaseManager<T>: Singleton<T> where T: Component {
             GameManager.instance.onInit  -= Init;
             GameManager.instance.onMenu  -= Menu;
             GameManager.instance.onPlay  -= Play;
-            GameManager.instance.onLoose -= Loose;
             GameManager.instance.onWin   -= Win;
         }
 
@@ -44,12 +42,8 @@ public abstract class BaseManager<T>: Singleton<T> where T: Component {
 
     }
 
-    protected virtual void Play(int p_LevelID, int p_PartID) {
+    protected virtual void Play(int p_LevelID) {
         
-    }
-
-    protected virtual void Loose() {
-
     }
 
     protected virtual void Win() {

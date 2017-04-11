@@ -38,7 +38,7 @@ public class ModelManager: BaseManager<ModelManager> {
     #endregion
 
     #region Model Managment
-    protected override void Play(int p_LevelID, int p_PhaseManager) {
+    protected override void Play(int p_LevelID) {
         CreatModel(DataManager.instance.GetLevel(p_LevelID));
     }
 

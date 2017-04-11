@@ -49,7 +49,6 @@ public class TurnByTurnManager: BaseManager<TurnByTurnManager> {
         ModelManager.instance.onCreateDone += BuildArmy;
 
         Unit.onDeath                        -= RemoveDeadUnit;
-        Unit.onMove                         -= MakeAIFire;
         HUDManager.instance.onSwitchPart    -= SwitchPart;
         HUDManager.instance.onNextTurn      -= EndTurn;
         
@@ -57,10 +56,8 @@ public class TurnByTurnManager: BaseManager<TurnByTurnManager> {
         m_Armies.Clear();
     }
 
-    protected override void Play(int p_LevelID, int p_PartID) {
-        m_CurrentPart = p_PartID;
+    protected override void Play(int p_LevelID) {
         Unit.onDeath                        += RemoveDeadUnit;
-        Unit.onMove                         += MakeAIFire;
         HUDManager.instance.onSwitchPart    += SwitchPart;
         HUDManager.instance.onNextTurn      += EndTurn;
     }
@@ -81,65 +78,12 @@ public class TurnByTurnManager: BaseManager<TurnByTurnManager> {
 
         List<Unit> l_Army = m_Armies[m_CurrentPart][l_NextArmyType];
 
-        foreach (Unit l_Unit in l_Army) { print(l_Unit.id); l_Unit.Refresh(); }
+        foreach (Unit l_Unit in l_Army) l_Unit.Refresh();
 
         HUDManager.instance.ChangePlayerTurnName(l_NextArmyType.ToString());
         if (onNextTurn != null) onNextTurn(l_NextArmyType);
 
         ViewManager.instance.ClearAllHighlighted();
-        switch (l_NextArmyType) {
-            case ArmyType.ENVIRONMENT:
-                EndTurn();
-                break;
-            case ArmyType.AI:
-                CheckEndTurn();
-                MakeAIMove(l_Army);
-                break;
-            case ArmyType.PLAYER:
-                if (onPreselectUnit != null)
-                    onPreselectUnit(l_Army[0]);
-                break;
-        }
-    }
-
-    private void MakeAIMove(List<Unit> p_Army) {
-        List<Vector2> l_Move;
-
-        foreach (Unit l_Unit in p_Army) {
-            if (l_Unit.TryGetMove(out l_Move)) {
-                if (Controller.instance.TryReachCell(l_Move[0], l_Move[1])) {
-                    StartCoroutine(ViewManager.instance.SmoothMove(l_Unit, l_Move[0], l_Move[1]));
-                }
-            }
-
-            l_Unit.Move();
-        }
-
-        if (onIAEndTurn != null) onIAEndTurn();
-    }
-
-    private void MakeAIFire(Unit p_Unit) {
-        List<Unit> l_Army = m_Armies[m_CurrentPart][ArmyType.AI];
-        Vector2 l_Pos;
-        Vector2 l_NextPos;
-        Unit l_Target;
-
-        foreach (Unit l_Unit in l_Army) {
-            if (l_Unit.TryGetPos(out l_Pos)) {
-                l_NextPos = Controller.instance.GetNextPosition(l_Pos, l_Unit.direction);
-
-                if (Controller.instance.TryHitUnit(l_Pos, l_NextPos, l_Unit.inventory[WEAPON_SNIPER].range, out l_Target)) {
-                    for (int cptPart = 0; cptPart < m_Armies.Count; cptPart++) {
-                        if (m_Armies[cptPart][ArmyType.PLAYER].Contains(l_Target)) {
-                            l_Target.TakeHit();
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        CheckEndTurn();
     }
 
     private void CheckEndTurn(Unit p_Unit = null) {
@@ -170,9 +114,8 @@ public class TurnByTurnManager: BaseManager<TurnByTurnManager> {
                 if (p_Model[l_Point].TryGetContent(out l_Unit)) {
                     string l_Type = l_Unit.type;
 
-                    if (l_Type == UNIT_STATIC || l_Type == UNIT_LOOP || l_Type == UNIT_PATH) l_Part[ArmyType.AI].Add(l_Unit);
-                    else if (l_Type == UNIT_BARREL) l_Part[ArmyType.ENVIRONMENT].Add(l_Unit);
-                    else l_Part[ArmyType.PLAYER].Add(l_Unit);
+                    if (/* TODO */true) l_Part[ArmyType.PLAYER1].Add(l_Unit);
+                    else l_Part[ArmyType.PLAYER2].Add(l_Unit);
                 }
                 if (onCreateProgress != null) onCreateProgress(l_SubPercent);
             }
@@ -228,8 +171,7 @@ public class TurnByTurnManager: BaseManager<TurnByTurnManager> {
             foreach (KeyValuePair<ArmyType, List<Unit>> l_Armies in l_PartArmies) {
                 if (l_Armies.Value.Contains(p_UnitToRemove)) {
                     l_Armies.Value.Remove(p_UnitToRemove);
-                    if (l_Armies.Key == ArmyType.PLAYER && onPlayerUnitDie != null)
-                    {
+                    if (l_Armies.Key == ArmyType.PLAYER1 && onPlayerUnitDie != null) {
                         onPlayerUnitDie();
                         return;
                     }

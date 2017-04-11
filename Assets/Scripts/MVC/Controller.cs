@@ -79,7 +79,7 @@ public class Controller: BaseManager<Controller> {
         ViewManager.instance.onEndMove          -= EndMove;
     }
 
-    protected override void Play(int p_LevelID, int p_PartID) {
+    protected override void Play(int p_LevelID) {
         InputManager.instance.onUPGame          += OnClick;
         HUDManager.instance.onUseItem           += SelectWeaponItem;
         TurnByTurnManager.instance.onNextTurn   += ClearStateMachine;
@@ -238,31 +238,26 @@ public class Controller: BaseManager<Controller> {
         SelectionMethode();
     }
 
-    private void DoActionMove()
-    {
-        if (TryReachCell(m_LastModelPosAfterFire, m_ModelHitPos) && TurnByTurnManager.instance.IsUnitInArmy(m_CurrentUnit, ArmyType.PLAYER1))
-        {
+    private void DoActionMove() {
+        if (TryReachCell(m_LastModelPosAfterFire, m_ModelHitPos) && TurnByTurnManager.instance.IsUnitInArmy(m_CurrentUnit, ArmyType.PLAYER1)) {
             if (onStartMove != null) onStartMove();
             HUDManager.instance.SwitchUnitPanel(false);
-
-            TryGetNextDirection(m_LastModelPos, m_ModelHitPos, out m_CurrentUnit.direction);
-            StartCoroutine(ViewManager.instance.SmoothMove(m_CurrentUnit, m_LastModelPosAfterFire, m_ModelHitPos));//Transform.Find
+            
+            StartCoroutine(ViewManager.instance.SmoothMove(m_CurrentUnit, m_LastModelPosAfterFire, m_ModelHitPos));
         }
         else SetModeNormal();
     }
 
-    private void DoActionFire()
-    {
+    private void DoActionFire() {
         Direction l_LookingDirection;
-        if (GetLookingDirection(m_LastModelPos, m_ModelHitPos, out l_LookingDirection))
-        {
+        if (GetLookingDirection(m_LastModelPos, m_ModelHitPos, out l_LookingDirection)) {
             //Reorient
             Unit l_Target;
-            if (m_EquipedItem != null && TryHitUnit(m_LastModelPos, GetNextPosition(m_LastModelPos, l_LookingDirection), m_EquipedItem.range, out l_Target) && m_EquipedItem.TryUse())
-            {
+            if (m_EquipedItem != null && TryHitUnit(m_LastModelPos, GetNextPosition(m_LastModelPos, l_LookingDirection), m_EquipedItem.range, out l_Target) && m_EquipedItem.TryUse()) {
                 m_CurrentUnit.Action();
-                if (l_Target.TakeHit())
-                    DestroyUnit(m_ModelHitPos);
+
+                if (l_Target.TakeHit()) DestroyUnit(m_ModelHitPos);
+
                 SetModeMove();
             }
         }
@@ -307,7 +302,7 @@ public class Controller: BaseManager<Controller> {
         ViewManager.instance.ClearHighlight(m_CurrentUnit);
         p_Unit.Move();
 
-        if (TurnByTurnManager.instance.IsUnitInArmy(m_CurrentUnit, ArmyType.PLAYER) && onEndMove != null) onEndMove();
+        if (TurnByTurnManager.instance.IsUnitInArmy(m_CurrentUnit, ArmyType.PLAYER1) && onEndMove != null) onEndMove();
         if (onUnitEndMove != null) onUnitEndMove(m_CurrentUnit);
     }
 
@@ -398,7 +393,7 @@ public class Controller: BaseManager<Controller> {
     }
 
     public bool TryHitUnit(Vector2 p_Origine, Vector2 p_Arrival, int p_Distance, out Unit p_Unit) {
-        p_Unit = new Unit("", Vector2.zero, DataManager.instance.GetUnitTemplate(""), Direction.UP);
+        p_Unit = new Unit("", Vector2.zero, DataManager.instance.GetUnitTemplate(""));
         return false;
     }
 

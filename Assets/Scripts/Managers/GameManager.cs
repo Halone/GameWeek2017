@@ -10,8 +10,7 @@ public class GameManager: Singleton<GameManager> {
 
     public Action onInit;
     public Action onMenu;
-    public Action<int, int> onPlay;
-    public Action onLoose;
+    public Action<int> onPlay;
     public Action onWin;
     #endregion
 
@@ -78,18 +77,13 @@ public class GameManager: Singleton<GameManager> {
         if (onMenu != null) onMenu();
     }
 
-    private void Play(int p_LevelID, int p_PartID) {
-        if (onPlay != null) onPlay(p_LevelID, p_PartID);
-    }
-
-    private void Loose() {
-        if (onLoose != null) onLoose();
-        if (onMenu != null) onMenu();
+    private void Play(int p_LevelID) {
+        if (onPlay != null) onPlay(p_LevelID);
     }
 
     private void Win() {
         if (onWin != null) onWin();
-        if (onMenu != null) onMenu();
+        //if (onMenu != null) onMenu();
     }
     #endregion
 }

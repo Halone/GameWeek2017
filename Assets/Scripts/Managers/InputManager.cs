@@ -66,7 +66,7 @@ public abstract class InputManager: BaseManager<InputManager> {
         TurnByTurnManager.instance.onNextTurn   -= EndTurn;
     }
 
-    protected override void Play(int p_LevelID, int p_PartID) {
+    protected override void Play(int p_LevelID) {
         Controller.instance.onStartMove         += SetModeVoid;
         Controller.instance.onEndMove           += SetModeWait;
         TurnByTurnManager.instance.onNextTurn   += EndTurn;
@@ -174,14 +174,7 @@ public abstract class InputManager: BaseManager<InputManager> {
     }
 
     private void EndTurn(ArmyType p_ArmyType) {
-        switch (p_ArmyType) {
-            case ArmyType.PLAYER:
-                SetModeWait();
-                break;
-            case ArmyType.AI:
-                //SetModeVoid();
-                break;
-        }
+        SetModeWait();
     }
     #endregion
     #endregion
