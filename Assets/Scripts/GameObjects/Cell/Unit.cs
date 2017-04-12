@@ -5,6 +5,8 @@ using UnityEngine;
 public class Unit: TileObject {
     #region Variables
     private const string CONTENT = "content";
+    private const int EXPLOSION_DAMMAGE = 5;
+    private bool m_Triggered = false;
 
     #region Hit Point
     public int maxHP {
@@ -104,6 +106,13 @@ public class Unit: TileObject {
     }
 
     public virtual bool TakeHit(int p_Dammage = 1) {
+
+        if (m_Triggered){
+            p_Dammage += EXPLOSION_DAMMAGE;
+            DoExplosion();
+        }
+        m_Triggered = !m_Triggered;
+
         if (p_Dammage < currentHP) {
             currentHP -= p_Dammage;
             if (onHit != null) onHit(this);
@@ -113,6 +122,10 @@ public class Unit: TileObject {
             Die();
             return true;
         }
+    }
+
+    public virtual void DoExplosion(){
+
     }
 
     public virtual void Die() {
