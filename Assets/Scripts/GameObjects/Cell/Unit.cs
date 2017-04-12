@@ -5,7 +5,7 @@ using UnityEngine;
 public class Unit: TileObject {
     #region Variables
     private const string CONTENT = "content";
-    private const int EXPLOSION_DAMMAGE = 5;
+    private const int EXPLOSION_DAMMAGE = 10;
     private bool m_Triggered = false;
 
     #region Hit Point
