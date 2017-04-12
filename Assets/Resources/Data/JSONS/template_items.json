@@ -9,20 +9,23 @@
 		"areaOfEffect": 0,
 		"cooldown": 0,
 		"use": 0,
+		"damage":7,
 		"cost": 1
 	}, {
 		"name": "staff",
-		"range": 13,
+		"range": 4,
 		"areaOfEffect": 0,
 		"cooldown": 0,
 		"use": 0,
+		"damage":6,
 		"cost": 1
 	}, {
 		"name": "bow",
-		"range": 2,
+		"range": 3,
 		"areaOfEffect": 0,
 		"cooldown": 0,
 		"use": 0,
+		"damage":4,
 		"cost": 1
 	}]
 }
