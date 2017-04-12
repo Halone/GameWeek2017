@@ -16,5 +16,10 @@ public enum CenterContent {
 
 public enum TileContent {
     VOID,
-    RED_KNIGHT
+    RED_KNIGHT,
+    BLUE_KNIGHT,
+    RED_BOWMAN,
+    BLUE_BOWMAN,
+    RED_WIZARD,
+    BLUE_WIZARD
 }
