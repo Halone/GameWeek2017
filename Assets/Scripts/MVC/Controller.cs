@@ -102,50 +102,7 @@ public class Controller: BaseManager<Controller> {
     }
 
     private void SelectWeaponItem(string p_ItemName) {
-        if (p_ItemName.Contains("Tile:")) {
-            foreach (TileObject l_TileObj in m_CurrentTileObj.Values) {
-                if (l_TileObj.type == "lever") {
-                    #region Lever
-                    KeyValuePair<string, Vector2> l_Object;
-
-                    if (l_TileObj.TryGetTargetData(out l_Object)) {
-                        /*Dictionary<Direction, SideObject> l_Sides;
-
-                        if (m_Model[l_Object.Value].TryGetSides(out l_Sides)) {
-                            SideObject m_TargetedElem = l_Sides[DataManager.instance.GetDirection(l_Object.Key.Split('_')[2])];
-
-                            if (m_TargetedElem.GetType() == typeof(Dors)) {
-                                m_TargetedElem.Open();
-                                ViewManager.instance.RotateObject(l_Object.Key, Direction.RIGHT, "dors");
-                            }
-                            else if (m_TargetedElem.GetType() == typeof(Window)) {
-                                m_TargetedElem.Open();
-                            }
-                        }*/
-                    }
-                    #endregion
-                }
-                else if (l_TileObj.type == "hatch") {
-                    #region Hatch
-                    KeyValuePair<string, Vector2> l_Object;
-
-                    if (l_TileObj.TryGetTargetData(out l_Object)) {
-                        CenterObject l_CenterObject;
-                        Unit l_Unit;
-
-                        if (!m_Model[l_Object.Value].TryGetContent(out l_Unit)) {
-                            if (m_Model[l_Object.Value].TryGetCenter(out l_CenterObject)) {
-                                m_Model[l_Object.Value].TrySetContent(m_CurrentUnit);
-                                m_Model[m_ModelHitPos].TrySetContent();
-                                ViewManager.instance.TeleportTo(m_CurrentUnit.id, l_CenterObject.id);
-                            }
-                        }
-                    }
-                    #endregion
-                }
-            }
-        }
-        else SetModeFire(m_CurrentUnit.inventory[p_ItemName]);
+        SetModeFire(m_CurrentUnit.inventory[p_ItemName]);
     }
 
     #region Model Managment

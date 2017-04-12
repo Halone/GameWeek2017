@@ -10,24 +10,7 @@ public class ViewManager: BaseManager<ViewManager> {
     private const string DECOR          = "decor";
     private const string OBSTACLE       = "obstacle";
     private const string TILE           = "tile";
-    private const string WALL           = "wall";
-    private const string LINK           = "link";
-    private const string WINDOW         = "window";
-    private const string DORS           = "dors";
-    private const string HATCH          = "hatch";
-    private const string LEVER          = "lever";
-    private const string COLOR          = "color";
-    private const string BARREL         = "Barrel";
-    private const string MONICA         = "Monica";
-    private const string BILLY          = "Billy";
-    private const string JOHN           = "John";
-    private const string STATIC         = "Enemy_Static";
-    private const string PATH           = "Enemy_Path";
-    private const string LOOP           = "Enemy_Loop";
-    private const string BUSH           = "Bush";
-    private const string MUR            = "Mur_1";
-    private const string SOL            = "Sol_bordure";
-    private const string SOCLE          = "socle";
+    private const string RED_KNIGHT     = "RED_Knight";
     [SerializeField]
     private float speedAnim = 1;
     [SerializeField]
@@ -36,14 +19,10 @@ public class ViewManager: BaseManager<ViewManager> {
     private List<Transform> m_Parts;
     private List<SpriteRenderer> m_HighlightedUnits;
     private Dictionary<string, GameObject> m_Prefabs;
-    private Dictionary<Direction, float> m_Angles;
-    private Dictionary<string, CenterObject> m_Pairs;
-    private Dictionary<int, string> m_PartToCharaTag;
 
     private Sprite m_SocleSelection;
     private Sprite m_SocleFire;
     private Sprite m_SocleMovement;
-
     private SpriteRenderer m_SocleTrans;
 
     public Action onCreateDone;
@@ -54,60 +33,31 @@ public class ViewManager: BaseManager<ViewManager> {
     #region Initialisation & Destroy
     protected override IEnumerator CoroutineStart() {
         m_Parts = new List<Transform>();
-        m_Pairs = new Dictionary<string, CenterObject>();
 
         #region Prefabs
         m_Prefabs = new Dictionary<string, GameObject>();
         m_Prefabs.Add(DECOR, Resources.Load<GameObject>(PATH_PREFAB + DECOR));
         m_Prefabs.Add(OBSTACLE, Resources.Load<GameObject>(PATH_PREFAB + OBSTACLE));
         m_Prefabs.Add(TILE, Resources.Load<GameObject>(PATH_PREFAB + TILE));
-        m_Prefabs.Add(WALL, Resources.Load<GameObject>(PATH_PREFAB + WALL));
-        m_Prefabs.Add(LINK, Resources.Load<GameObject>(PATH_PREFAB + LINK));
-        m_Prefabs.Add(WINDOW, Resources.Load<GameObject>(PATH_PREFAB + WINDOW));
-        m_Prefabs.Add(DORS, Resources.Load<GameObject>(PATH_PREFAB + DORS));
-        m_Prefabs.Add(HATCH, Resources.Load<GameObject>(PATH_PREFAB + HATCH));
-        m_Prefabs.Add(LEVER, Resources.Load<GameObject>(PATH_PREFAB + LEVER));
-        m_Prefabs.Add(BARREL, Resources.Load<GameObject>(PATH_PREFAB + BARREL));
-        m_Prefabs.Add(MONICA, Resources.Load<GameObject>(PATH_PREFAB + MONICA));
-        m_Prefabs.Add(BILLY, Resources.Load<GameObject>(PATH_PREFAB + BILLY));
-        m_Prefabs.Add(JOHN, Resources.Load<GameObject>(PATH_PREFAB + JOHN));
-        m_Prefabs.Add(STATIC, Resources.Load<GameObject>(PATH_PREFAB + STATIC));
-        m_Prefabs.Add(PATH, Resources.Load<GameObject>(PATH_PREFAB + PATH));
-        m_Prefabs.Add(LOOP, Resources.Load<GameObject>(PATH_PREFAB + LOOP));
-        m_Prefabs.Add(BUSH, Resources.Load<GameObject>(PATH_PREFAB + BUSH));
-        m_Prefabs.Add(MUR, Resources.Load<GameObject>(PATH_PREFAB + MUR));
-        m_Prefabs.Add(SOL, Resources.Load<GameObject>(PATH_PREFAB + SOL));
-        #endregion
-
-        #region Angles
-        m_Angles = new Dictionary<Direction, float>();
-        m_Angles.Add(Direction.UP, 0.0f);
-        m_Angles.Add(Direction.DOWN, 180.0f);
-        m_Angles.Add(Direction.LEFT, 270.0f);
-        m_Angles.Add(Direction.RIGHT, 90.0f);
+        m_Prefabs.Add(RED_KNIGHT, Resources.Load<GameObject>(PATH_PREFAB + RED_KNIGHT));
         #endregion
 
         yield return true;
         isReady = true;
     }
-    protected override void Init()
-    {
+
+    protected override void Init() {
         Unit.onDeath += DestroyUnit;
-        Controller.instance.onSelectUnit += SelectUnit;
+        Controller.instance.onSelectUnit        += SelectUnit;
         //Controller.instance.onUnitEndMove += ClearHighlight;
-        Controller.instance.onHighlightEnemies += HighlightShootable;
-        HUDManager.instance.onSwitchPart += ClearAllHighlighted;
+        Controller.instance.onHighlightEnemies  += HighlightShootable;
+        HUDManager.instance.onSwitchPart        += ClearAllHighlighted;
 
         m_SocleSelection    = Resources.Load<Sprite>("Graphics/Texture/UI_selection_unite");
         m_SocleFire         = Resources.Load<Sprite>("Graphics/Texture/UI_selection_tir");
         m_SocleMovement     = Resources.Load<Sprite>("Graphics/Texture/UI_selection_chemin");
-        
-        m_PartToCharaTag = new Dictionary<int, string>();
-        m_PartToCharaTag.Add(0, "Monica");
-        m_PartToCharaTag.Add(1, "John");
-        m_PartToCharaTag.Add(2, "Billy");
+        m_HighlightedUnits  = new List<SpriteRenderer>();
 
-        m_HighlightedUnits = new List<SpriteRenderer>();
         base.Init();
     }
     protected override void Destroy() {
@@ -116,12 +66,6 @@ public class ViewManager: BaseManager<ViewManager> {
 
         m_Prefabs.Clear();
         m_Prefabs = null;
-
-        m_Angles.Clear();
-        m_Angles = null;
-
-        m_Pairs.Clear();
-        m_Pairs = null;
 
         base.Destroy();
     }
@@ -159,16 +103,14 @@ public class ViewManager: BaseManager<ViewManager> {
             }
         }
 
-        BuildColor();
-
         if (onCreateDone != null) onCreateDone();
     }
 
-    private void ClearView()
-    {
+    private void ClearView() {
         int l_ChildsCount = transform.childCount;
-        for (int i = l_ChildsCount - 1; i >= 0; i--)
-            GameObject.Destroy(transform.GetChild(i).gameObject);
+        for (int i = l_ChildsCount - 1; i >= 0; i--) {
+            Destroy(transform.GetChild(i).gameObject);
+        }
     }
 
     #region Build Managment
@@ -193,8 +135,6 @@ public class ViewManager: BaseManager<ViewManager> {
             l_Object.parent         = gameObject.transform;
             l_Object.localPosition  = GetViewPos(p_Pos);
             l_Object.name           = l_Center.id;
-
-            if (!m_Pairs.ContainsKey(l_Center.targetID)) m_Pairs.Add(l_Center.id, l_Center);
         }
     }
 
@@ -206,32 +146,7 @@ public class ViewManager: BaseManager<ViewManager> {
             l_Object.parent         = gameObject.transform;
             l_Object.localPosition  = GetViewPos(p_Pos);
             l_Object.name           = l_Unit.id;
-
-            switch (l_Unit.type)
-            {
-                case "Monica":
-                    l_Object.tag = "Monica";
-                    break;
-                case "John":
-                    l_Object.tag = "John";
-                    break;
-                case "Billy":
-                    l_Object.tag = "Billy";
-                    break;
-                default:
-                    break;
-            }
         }
-    }
-
-    private void BuildColor() {
-        foreach (KeyValuePair<string, CenterObject> l_Center in m_Pairs) {
-            Color l_Color = UnityEngine.Random.ColorHSV();
-            gameObject.transform.Find(l_Center.Key).Find(COLOR).GetComponent<Renderer>().material.color             = l_Color;
-            gameObject.transform.Find(l_Center.Value.targetID).Find(COLOR).GetComponent<Renderer>().material.color  = l_Color;
-        }
-
-        m_Pairs.Clear();
     }
 
     private void BuildDecor(DecorObject p_Decor, int p_PartID) {
@@ -273,36 +188,14 @@ public class ViewManager: BaseManager<ViewManager> {
         yield return null;
     }
 
-    public void RotateObject(string p_ObjName, Direction p_ObjDirection, string p_SubObjName = null)
-    {
-        Transform l_Transform = transform.Find(p_ObjName);
-        if (p_SubObjName != null)
-            l_Transform = l_Transform.Find(p_SubObjName);
-        l_Transform.rotation = Quaternion.identity;
-        l_Transform.RotateAround(l_Transform.position, Vector3.up, m_Angles[p_ObjDirection]);
-    }
-
-    public Vector3 GetViewPos(string p_ObjID)
-    {
+    public Vector3 GetViewPos(string p_ObjID) {
         return transform.Find(p_ObjID).transform.position;
     }
-
-    public void TeleportTo(string p_ObjToTeleportID, string p_ObjDestinationID)
-    {
-        transform.Find(p_ObjToTeleportID).transform.position = GetViewPos(p_ObjDestinationID);
-    }
-
-    public Vector3 GetPlayerChara(int p_CharaPart)
-    {
-        return GameObject.FindWithTag(m_PartToCharaTag[p_CharaPart]).transform.position;
-    }
-
     #endregion
     #endregion
 
     public void SelectUnit(string p_ObjID) {
-        //print("highlight");
-        Transform l_Unit = transform.Find(p_ObjID);
+        /*Transform l_Unit = transform.Find(p_ObjID);
         if(l_Unit != null)
         {
             Transform m_Socle = l_Unit.Find(SOCLE);
@@ -315,13 +208,11 @@ public class ViewManager: BaseManager<ViewManager> {
                     m_HighlightedUnits.Add(m_SpriteRenderer);
                 }
             }
-        }
+        }*/
     }
 
-    public void ClearHighlight(Unit p_Unit)
-    {
-        print("ClearHighlightSolo: " + p_Unit.id);
-        Transform l_Unit = transform.Find(p_Unit.id);
+    public void ClearHighlight(Unit p_Unit) {
+        /*Transform l_Unit = transform.Find(p_Unit.id);
         if (l_Unit != null)
         {
             Transform m_Socle = l_Unit.Find(SOCLE);
@@ -335,12 +226,10 @@ public class ViewManager: BaseManager<ViewManager> {
                     m_HighlightedUnits.Remove(m_SpriteRenderer);
                 }
             }
-        }
+        }*/
     }
 
-    public void ClearAllHighlighted(int p = 0)
-    {
-        //print("ClearHighlightAll");
+    public void ClearAllHighlighted(int p = 0) {
         foreach(SpriteRenderer l_SpriteRenderer in m_HighlightedUnits)
             l_SpriteRenderer.sprite = null;
     }
@@ -350,7 +239,7 @@ public class ViewManager: BaseManager<ViewManager> {
         Transform l_TargetTransform = transform.Find(p_SelectedObjID);
         if (l_TargetTransform != null)
         {
-            Transform l_SocleTransform = l_TargetTransform.Find(SOCLE);
+            /*Transform l_SocleTransform = l_TargetTransform.Find(SOCLE);
             if (l_SocleTransform != null)
             {
                 SpriteRenderer l_SocleSpriteRenderer = l_SocleTransform.GetComponent<SpriteRenderer>();
@@ -359,7 +248,7 @@ public class ViewManager: BaseManager<ViewManager> {
                     l_SocleSpriteRenderer.sprite = m_SocleFire;
                     m_HighlightedUnits.Add(l_SocleSpriteRenderer);
                 }
-            }
+            }*/
         }
     }
 }

@@ -25,28 +25,25 @@ public class Tile: Cell {
 
         #region Content
         l_Json = p_JsonData.GetField(FIELD_CONTENT);
-        //if (l_Json != null) m_Content = GetContent(l_Json, p_Pos);
+        if (l_Json != null) m_Content = GetContent(l_Json, p_Pos);
         #endregion
     }
 
     /*private CenterObject GetCenter(JSONObject l_Center, Vector2 p_Pos) {
         switch (l_Center.GetField(FIELD_TYPE).str) {
-            default: return new GameObject() as CenterObject;
+            default: return new CenterObject() as CenterObject;
         }
     }*/
 
-    /*private Unit GetContent(JSONObject l_Content, Vector2 p_Pos) {
-        string l_Type           = l_Content.GetField(FIELD_TYPE).str;
+    private Unit GetContent(JSONObject l_Content, Vector2 p_Pos) {
+        string l_SubType    = l_Content.GetField(FIELD_TYPE).str;
+        string l_Type       = l_SubType.Substring(l_SubType.IndexOf("_") + 1);
         UnitTemplate l_Template = DataManager.instance.GetUnitTemplate(l_Type);
-        Direction l_Direction   = DataManager.instance.GetDirection(l_Content.GetField(FIELD_DIRECTION).str);
 
         switch (l_Type) {
-            case CONTENT_STATIC: return new Enemy(l_Type, p_Pos, l_Template, l_Direction, l_Content.GetField(FIELD_PATH).list);
-            case CONTENT_PATH: return new Enemy(l_Type, p_Pos, l_Template, l_Direction, l_Content.GetField(FIELD_PATH).list);
-            case CONTENT_LOOP: return new Enemy(l_Type, p_Pos, l_Template, l_Direction, l_Content.GetField(FIELD_PATH).list, true);
-            default: return new Unit(l_Type, p_Pos, l_Template, l_Direction);
+            default: return new Unit(l_SubType, p_Pos, l_Template);
         }
-    }*/
+    }
     #endregion
 
     #region Tile Managment

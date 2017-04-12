@@ -11,12 +11,10 @@ public enum ArmyType {
 }
 
 public enum CenterContent {
-    VOID
+    PLAIN
 }
 
 public enum TileContent {
     VOID,
-    KNIGHT,
-    WIZARD,
-    BOWMAN
+    RED_KNIGHT
 }

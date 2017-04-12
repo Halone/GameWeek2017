@@ -4,19 +4,19 @@
 		"version": 0.1
 	},
 	"data": [{
-		"name": "knight",
+		"name": "Knight",
 		"HP": 10,
 		"MP": 3,
 		"AP": 1,
 		"inventory": ["sword"]
 	}, {
-		"name": "wizard",
+		"name": "Wizard",
 		"HP": 6,
 		"MP": 3,
 		"AP": 1,
 		"inventory": ["staff"]
 	}, {
-		"name": "bowman",
+		"name": "Bowman",
 		"HP": 8,
 		"MP": 4,
 		"AP": 1,

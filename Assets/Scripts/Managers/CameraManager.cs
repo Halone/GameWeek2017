@@ -43,7 +43,6 @@ public class CameraManager: BaseManager<CameraManager> {
     protected override void Init() {
         InputManager.instance.onScrollGame      += ScrollCamera;
         //Controller.instance.onPlayerSelected    += MoveCameraTo;
-        HUDManager.instance.onSwitchPart        += FocusCameraOn;
         base.Init();
     }
 
@@ -127,8 +126,8 @@ public class CameraManager: BaseManager<CameraManager> {
         Transform l_Camera  = m_CameraList[CAMERA_LEVEL].gameObject.transform;
         Vector3 l_Translate = p_DeltaPos/2 * ScrollCameraSpeed * Time.deltaTime;
 
-        l_Camera.Translate(l_Translate.x, 0, 0, Space.Self);
-        l_Camera.Translate(m_Project.x * l_Translate.y, 0, m_Project.z * l_Translate.y, Space.World);
+        l_Camera.Translate(l_Translate.x, l_Translate.y, 0, Space.Self);
+        //l_Camera.Translate(m_Project.x * l_Translate.y, 0, m_Project.z * l_Translate.y, Space.World);
     }
 
     private void MoveCameraTo(string p_Target)
@@ -150,11 +149,6 @@ public class CameraManager: BaseManager<CameraManager> {
             yield return null;
         }
         yield return null;
-    }
-
-    private void FocusCameraOn(int p_Part)
-    {
-        StartCoroutine(SmoothMove(ViewManager.instance.GetPlayerChara(p_Part)));
     }
     #endregion
 }
